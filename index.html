@@ -30,26 +30,19 @@
 
         <div class="bg-white rounded-b-xl card-shadow border border-gray-100 p-3">
             
-            <div id="settings-panel" class="hidden bg-gray-50 p-4 rounded-xl border-2 border-dashed border-gray-200 mb-4 animate-pulse-once">
+            <div id="settings-panel" class="hidden bg-gray-50 p-4 rounded-xl border-2 border-dashed border-orange-200 mb-4">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Base de Costos por Gramo ($)</h3>
                     <button onclick="cerrarAjustes()" class="text-red-500 text-[10px] font-bold uppercase">Cerrar</button>
                 </div>
-                <div id="prices-editor" class="grid grid-cols-1 gap-2 mb-4">
-                    </div>
-                <button onclick="savePrices()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg text-xs shadow-md transition-all">GUARDAR CAMBIOS EN COSTOS</button>
+                <div id="prices-editor" class="grid grid-cols-1 gap-2 mb-4"></div>
+                <button onclick="savePrices()" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg text-xs shadow-md">GUARDAR CAMBIOS EN COSTOS</button>
             </div>
 
             <section class="bg-gray-50 p-3 rounded-lg border border-gray-100 mb-4">
-                <div class="flex items-center gap-4">
-                    <div class="flex-1">
-                        <label class="text-[9px] font-bold text-gray-500 uppercase tracking-wider block mb-1">Cantidad de Panes a Elaborar</label>
-                        <input type="number" id="cantidadPanes" value="1" min="1" step="1" oninput="calcular()" class="w-full bg-white p-3 rounded-lg border border-gray-200 outline-none text-2xl font-black shadow-inner focus:border-gray-800 text-center">
-                    </div>
-                    <div class="w-1/3 text-center border-l border-gray-100 pl-4">
-                        <span class="text-[8px] font-bold text-gray-400 uppercase block mb-1 no-wrap">Masa por Pan Base</span>
-                        <span class="text-lg font-bold text-gray-700 italic">402,5 g</span>
-                    </div>
+                <div>
+                    <label class="text-[9px] font-bold text-gray-500 uppercase tracking-wider block mb-1">Cantidad de Panes a Elaborar</label>
+                    <input type="number" id="cantidadPanes" placeholder="0" min="0" step="1" oninput="calcular()" class="w-full bg-white p-3 rounded-lg border border-gray-200 outline-none text-2xl font-black shadow-inner focus:border-gray-800 text-center">
                 </div>
             </section>
 
@@ -62,8 +55,7 @@
                             <th class="px-1 py-2 text-right">Costo ($)</th>
                         </tr>
                     </thead>
-                    <tbody id="tabla-body" class="divide-y divide-gray-50 text-[13px]">
-                        </tbody>
+                    <tbody id="tabla-body" class="divide-y divide-gray-50 text-[13px]"></tbody>
                     <tfoot class="border-t-2 border-gray-100">
                         <tr class="bg-gray-50 text-gray-600">
                             <td class="px-2 py-2 font-bold text-[10px] uppercase">Masa Total a Preparar</td>
@@ -71,15 +63,14 @@
                         </tr>
                         <tr class="bg-gray-800 text-white shadow-inner">
                             <td class="px-2 py-3 font-bold text-[11px] rounded-l-lg uppercase tracking-tight">Costo Total Insumos ($)</td>
-                            <td id="total-costo" colspan="2" class="px-2 py-3 text-right font-black text-xl rounded-r-lg">$0,00</td>
+                            <td id="total-costo" colspan="2" class="px-2 py-3 text-right font-black text-xl rounded-r-lg">$ 0,00</td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
 
-            <button onclick="copyToClipboard()" class="mt-4 w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 rounded-lg text-xs shadow-md active:scale-95 transition-all flex items-center justify-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
-                COPIAR RECETA Y COSTO PARA WHATSAPP
+            <button onclick="copyToClipboard()" class="mt-4 w-full bg-gray-600 text-white font-bold py-3 rounded-lg text-xs shadow-md active:scale-95 transition-all flex items-center justify-center gap-2">
+                COPIAR RECETA PARA WHATSAPP
             </button>
         </div>
     </div>
@@ -87,52 +78,32 @@
     <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-black/90 text-white px-6 py-2 rounded-full text-[10px] font-bold opacity-0 transition-opacity pointer-events-none z-50"></div>
 
     <script>
-        // ==========================================
-        // 1. CONFIGURACIÓN TÉCNICA
-        // ==========================================
-        const CLAVE_MAESTRA = "1506"; // Clave administrativo basada en la imagen
-        const LOCALE = 'es-VE'; // Configuración para Venezuela (Punto miles, coma decimal)
-        
-        // Peso base de masa para UN solo pan (de tu imagen 3)
+        const CLAVE_MAESTRA = "1506";
+        const LOCALE = 'es-VE';
         const MASA_PAN_ESTANDAR = 402.5; 
 
-        // Costos base por gramo (calculados de tus imágenes)
         const preciosBase = {
-            "Harina": 0.0012608,   // $0,290 / 230g
-            "Agua": 0,             // $0,000 / 125,35g
-            "Levadura": 0.012532,  // $0,049 / 3,91g
-            "Sal": 0.005217,       // $0,024 / 4,6g
-            "Azúcar": 0.00038,     // $0,007 / 18,4g
-            "Margarina": 0.001576, // $0,029 / 18,4g
-            "Vainilla": 0.002174   // $0,004 / 1,84g
+            "Harina": 0.0012608, "Agua": 0, "Levadura": 0.012532, "Sal": 0.005217,
+            "Azúcar": 0.00038, "Margarina": 0.001576, "Vainilla": 0.002174
         };
 
-        // Estructura de la receta basada en Harina = 100% (Baker's Percentages)
         const recetaBase = [
-            { nombre: "Harina", porcentaje: 100.0 },
-            { nombre: "Agua", porcentaje: 54.5 },
-            { nombre: "Levadura", porcentaje: 1.7 },
-            { nombre: "Sal", porcentaje: 2.0 },
-            { nombre: "Azúcar", porcentaje: 8.0 },
-            { nombre: "Margarina", porcentaje: 8.0 },
+            { nombre: "Harina", porcentaje: 100.0 }, { nombre: "Agua", porcentaje: 54.5 },
+            { nombre: "Levadura", porcentaje: 1.7 }, { nombre: "Sal", porcentaje: 2.0 },
+            { nombre: "Azúcar", porcentaje: 8.0 }, { nombre: "Margarina", porcentaje: 8.0 },
             { nombre: "Vainilla", porcentaje: 0.8 }
         ];
 
         let preciosActuales = {};
-
-        // FORMATEADORES REGIONALES
         const fmtPeso = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 0 });
         const fmtCosto = new Intl.NumberFormat(LOCALE, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-        // ==========================================
-        // 2. GESTIÓN DE SEGURIDAD Y PRECIOS
-        // ==========================================
         function verificarAcceso() {
             const intento = prompt("Acceso Administrativo. Ingrese clave:");
             if (intento === CLAVE_MAESTRA) {
                 document.getElementById('settings-panel').classList.remove('hidden');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else if (intento !== null) alert("Clave incorrecta. Intente de nuevo.");
+            } else if (intento !== null) alert("Clave incorrecta.");
         }
 
         function cerrarAjustes() { document.getElementById('settings-panel').classList.add('hidden'); }
@@ -166,55 +137,35 @@
             calcular();
         }
 
-        // ==========================================
-        // 3. LÓGICA DE CÁLCULO (ESCALADO)
-        // ==========================================
         function calcular() {
             const inputCount = document.getElementById('cantidadPanes');
-            let count = parseInt(inputCount.value);
-            
-            // Validación mínima
-            if (!count || count < 1) { count = 1; inputCount.value = 1; }
+            // Permitimos que esté vacío mientras el usuario escribe
+            const count = parseInt(inputCount.value) || 0; 
 
-            // 1. Calcular el peso total de masa que necesitamos
             const pesoMasaTotalDeseada = count * MASA_PAN_ESTANDAR;
-
-            // 2. Calcular la harina base necesaria
-            // Suma de porcentajes es 175%
             const pesoHarinaNecesaria = pesoMasaTotalDeseada / (recetaBase.reduce((a, b) => a + b.porcentaje, 0) / 100);
 
             const tbody = document.getElementById('tabla-body');
             tbody.innerHTML = '';
             let costoTotalInsumos = 0;
 
-            // 3. Calcular peso de cada ingrediente y su costo
             recetaBase.forEach(ing => {
                 const gramos = (pesoHarinaNecesaria * ing.porcentaje) / 100;
                 const costo = gramos * (preciosActuales[ing.nombre] || 0);
                 costoTotalInsumos += costo;
 
-                // Formatear pesos con punto para miles
-                const gFormateado = fmtPeso.format(Math.round(gramos));
-                
-                // Formatear costos con coma para decimales
-                const cFormateado = fmtCosto.format(costo);
-
                 tbody.innerHTML += `
                     <tr>
                         <td class="px-1 py-3 font-semibold text-gray-700 text-xs">${ing.nombre}</td>
-                        <td class="px-1 py-3 text-right font-bold text-gray-800 no-wrap text-sm">${gFormateado} g</td>
-                        <td class="px-1 py-3 text-right text-gray-400 font-mono text-[11px] no-wrap border-l border-gray-50/50">$ ${cFormateado}</td>
+                        <td class="px-1 py-3 text-right font-bold text-gray-800 no-wrap text-sm">${fmtPeso.format(Math.round(gramos))} g</td>
+                        <td class="px-1 py-3 text-right text-gray-400 font-mono text-[11px] no-wrap border-l border-gray-50/50">$ ${fmtCosto.format(costo)}</td>
                     </tr>`;
             });
 
-            // 4. Actualizar Totales en interfaz
             document.getElementById('total-gramos').innerText = fmtPeso.format(Math.round(pesoMasaTotalDeseada)) + ' g';
             document.getElementById('total-costo').innerText = '$ ' + fmtCosto.format(costoTotalInsumos);
         }
 
-        // ==========================================
-        // 4. UTILIDADES
-        // ==========================================
         function showToast(msg) {
             const toast = document.getElementById('toast');
             toast.innerText = msg; toast.style.opacity = '1';
@@ -222,32 +173,21 @@
         }
 
         async function copyToClipboard() {
-            const panes = document.getElementById('cantidadPanes').value;
+            const panes = document.getElementById('cantidadPanes').value || 0;
             const masaTotal = document.getElementById('total-gramos').innerText;
             const costoTotal = document.getElementById('total-costo').innerText;
             
-            let text = `📋 PAN CAMPESINO - Resumen de Producción\n`;
-            text += `Unidades: ${panes}\n`;
-            text += `Costo Insumos: ${costoTotal}\n`;
-            text += `Masa Total a Preparar: ${masaTotal}\n`;
-            text += `---\n`;
-            text += `Ingredientes Necesarios:\n`;
-            
+            let text = `📋 PAN CAMPESINO - Producción\nUnidades: ${panes}\nCosto Insumos: ${costoTotal}\nMasa Total: ${masaTotal}\n---\n`;
             document.querySelectorAll('#tabla-body tr').forEach(tr => {
-                const ingrediente = tr.cells[0].innerText;
-                const peso = tr.cells[1].innerText;
-                text += `- ${ingrediente.padEnd(12)}: ${peso}\n`;
+                text += `- ${tr.cells[0].innerText}: ${tr.cells[1].innerText}\n`;
             });
-            text += `------------------------------\n`;
-            text += `Gestión Fernando Araujo`;
+            text += `\nGestión Fernando Araujo`;
 
-            try {
-                await navigator.clipboard.writeText(text);
-                showToast("LISTA COPIADA PARA WHATSAPP");
-            } catch (err) { console.error('Error al copiar', err); }
+            await navigator.clipboard.writeText(text);
+            showToast("LISTA COPIADA");
         }
 
-        window.onload = () => { loadPrices(); calcular(); };
+        window.onload = () => { loadPrices(); document.getElementById('cantidadPanes').value = 1; calcular(); };
     </script>
 </body>
 </html>
