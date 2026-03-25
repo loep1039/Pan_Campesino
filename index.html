@@ -5,21 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora Pan Campesino</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f8fafc; }
+        .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+    </style>
 </head>
-<body class="p-4 md:p-8 bg-slate-50">
+<body class="p-4 md:p-8 font-sans">
 
-    <div class="max-w-lg mx-auto bg-white rounded-[2rem] overflow-hidden shadow-2xl border border-slate-100">
-        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-center">
+    <div class="max-w-lg mx-auto bg-white rounded-[2rem] overflow-hidden card-shadow border border-slate-100">
+        <div class="bg-gradient-to-r from-blue-600 to-cyan-500 p-6 text-center">
             <h2 class="text-xl font-black text-white uppercase tracking-widest">
                 Pan Campesino
             </h2>
-            <p class="text-[10px] text-blue-100 font-bold uppercase mt-1">Producción por Unidades</p>
+            <div class="h-1 w-12 bg-white/30 mx-auto mt-2 rounded-full"></div>
         </div>
 
         <div class="p-6">
             <div class="mb-8">
-                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2 text-center">Cantidad de Panes a Producir</label>
-                <input type="number" id="cantidadPanes" value="4" oninput="calcular()" 
+                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2 text-center">Cantidad de Panes (Unidades)</label>
+                <input type="number" id="unidades" value="4" oninput="calcular()" 
                        class="w-full p-4 bg-slate-50 border-2 border-transparent focus:border-blue-400 rounded-2xl outline-none font-black text-center text-2xl text-slate-700 transition-all">
             </div>
 
@@ -34,23 +38,30 @@
                 </div>
             </div>
 
+            <div class="flex justify-center mb-6">
+                <span id="estadoConexion" class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase bg-slate-100 text-slate-400 transition-all">
+                    Sincronizando precios...
+                </span>
+            </div>
+
             <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
                 <table class="w-full text-left">
                     <thead class="bg-slate-50">
                         <tr>
-                            <th class="pl-4 py-4 text-[10px] font-bold text-slate-400 uppercase">Ingrediente</th>
+                            <th class="pl-4 py-4 text-[10px] font-bold text-slate-400 uppercase w-12">#</th>
+                            <th class="py-4 text-[10px] font-bold text-slate-400 uppercase">Ingrediente</th>
                             <th class="pr-4 py-4 text-[10px] font-bold text-slate-400 uppercase text-right">Cantidad / Costo</th>
                         </tr>
                     </thead>
                     <tbody id="listaIngredientes" class="divide-y divide-slate-50">
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
         </div>
     </div>
 
     <script>
-        const URL_NUBE = "https://script.google.com/macros/s/AKfycbzl8cTzjvfo6emxsDCrhRSaGo2ImlLU2Mgiu8_NDiaW6dSQHw6wv4-XJLiq9QkXcP3oBg/exec"; 
+        const URL_NUBE = "https://script.google.com/macros/s/AKfycbzl8cTzjvfo6emxsDCrhRSaGo2ImlLU2Mgiu8_NDiaW6dSQHw6wv4-XJLiq9QkXcP3oBg/exec";
         let precios = {};
 
         function formatLatam(num, dec = 2) {
@@ -66,17 +77,23 @@
                     acc[key.toLowerCase().trim()] = parseFloat(p) || 0;
                     return acc;
                 }, {});
-            } catch (e) { console.error("Error cargando precios"); }
+                
+                const status = document.getElementById('estadoConexion');
+                status.innerText = "✓ Precios Sincronizados";
+                status.className = "px-4 py-1.5 rounded-full text-[10px] font-black uppercase bg-green-50 text-green-500";
+            } catch (e) {
+                document.getElementById('estadoConexion').innerText = "⚠ Usando Precios Locales";
+            }
             calcular();
         }
 
         function calcular() {
-            const unidades = parseFloat(document.getElementById('cantidadPanes').value) || 0;
+            const unidades = parseFloat(document.getElementById('unidades').value) || 0;
             
-            // Lógica basada en tu tabla: 1 pan usa 230g de harina (100%)
-            const harinaPorPan = 230; 
-            const harinaTotal = harinaPorPan * unidades;
+            // Base: 230g de harina por pan campesino
+            const harinaBase = 230 * unidades;
 
+            // Porcentajes de tu tabla de Pan Campesino
             const receta = [
                 { nombre: "Harina", pct: 100 },
                 { nombre: "Agua", pct: 54.5 },
@@ -88,29 +105,34 @@
             ];
 
             let costoTotal = 0;
-            let masaTotal = 0;
+            let masaAcumulada = 0;
             let html = "";
 
-            receta.forEach(ing => {
-                const cantidadGramos = harinaTotal * (ing.pct / 100);
+            receta.forEach((ing, index) => {
+                const cantidadGramos = harinaBase * (ing.pct / 100);
+                masaAcumulada += cantidadGramos;
+                
+                // IMPORTANTE: Aquí se ajusta cómo se toma el precio
+                // Si en tu Excel el precio es 0.012 por gramo, se multiplica directo.
                 const precioBase = precios[ing.nombre.toLowerCase().trim()] || 0;
-                const subtotal = cantidadGramos * (precioBase / 100); // Asumiendo precio por 100g o ajusta según tu Sheets
+                const subtotal = cantidadGramos * precioBase; 
                 
                 costoTotal += subtotal;
-                masaTotal += cantidadGramos;
 
                 html += `
-                    <tr>
-                        <td class="pl-4 py-4 font-bold text-slate-700 text-[13px]">${ing.nombre} <span class="text-[9px] text-slate-300 ml-1">(${ing.pct}%)</span></td>
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="pl-4 py-4 text-[10px] font-black text-slate-300 italic">${index + 1}</td>
+                        <td class="py-4 font-bold text-slate-700 text-[13px]">${ing.nombre} <span class="text-[9px] text-slate-300 ml-1">(${ing.pct}%)</span></td>
                         <td class="pr-4 py-4 text-right">
                             <div class="text-[13px] font-black text-slate-900">${formatLatam(cantidadGramos, 1)} gr</div>
                             <div class="text-[10px] font-bold text-blue-400">$ ${formatLatam(subtotal, 3)}</div>
                         </td>
-                    </tr>`;
+                    </tr>
+                `;
             });
 
             document.getElementById('costoTotal').innerText = `$ ${formatLatam(costoTotal, 2)}`;
-            document.getElementById('pesoTotalMasa').innerText = `${formatLatam(masaTotal, 0)} gr`;
+            document.getElementById('pesoTotalMasa').innerText = `${formatLatam(masaAcumulada, 0)} gr`;
             document.getElementById('listaIngredientes').innerHTML = html;
         }
 
