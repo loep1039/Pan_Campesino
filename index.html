@@ -9,11 +9,18 @@
 <body class="p-4 md:p-8 bg-slate-50">
 
     <div class="max-w-lg mx-auto bg-white rounded-[2rem] overflow-hidden shadow-2xl border border-slate-100">
-        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-center">
+        <div class="bg-gradient-to-r from-indigo-700 to-blue-600 p-6 text-center relative">
+            <div class="absolute right-6 top-1/2 -translate-y-1/2 bg-white/20 p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </div>
             <h2 class="text-xl font-black text-white uppercase tracking-widest">
                 Pan Campesino
             </h2>
-            <p class="text-[10px] text-blue-100 font-bold uppercase mt-1">Producción por Unidades</p>
+            <p class="text-[9px] text-blue-100 font-bold uppercase mt-1 tracking-widest">
+                Sistema de Gestión - Fernando Araujo
+            </p>
         </div>
 
         <div class="p-6">
@@ -34,7 +41,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+            <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden mb-6">
                 <table class="w-full text-left">
                     <thead class="bg-slate-50">
                         <tr>
@@ -43,9 +50,17 @@
                         </tr>
                     </thead>
                     <tbody id="listaIngredientes" class="divide-y divide-slate-50">
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
+
+            <button onclick="copiarWhatsApp()" 
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-2xl uppercase text-xs tracking-widest transition-all shadow-lg shadow-indigo-200 active:scale-95 flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.63 1.438h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                Copiar para WhatsApp
+            </button>
         </div>
     </div>
 
@@ -61,29 +76,19 @@
             try {
                 const res = await fetch(URL_NUBE);
                 const data = await res.json();
-                
-                // Limpieza robusta de datos de la nube
                 precios = Object.keys(data).reduce((acc, key) => {
-                    let valor = String(data[key])
-                        .replace(/[$\s]/g, '') // Quita símbolo $ y espacios
-                        .replace(',', '.');    // Cambia coma decimal por punto
-                    
+                    let valor = String(data[key]).replace(/[$\s]/g, '').replace(',', '.');
                     acc[key.toLowerCase().trim()] = parseFloat(valor) || 0;
                     return acc;
                 }, {});
-
-                console.log("Precios cargados correctamente:", precios);
                 calcular();
             } catch (e) { 
-                console.error("Error cargando precios");
                 document.getElementById('costoTotal').innerText = "Error";
             }
         }
 
         function calcular() {
             const unidades = parseFloat(document.getElementById('cantidadPanes').value) || 0;
-            
-            // Definición de receta: 230g de harina por cada unidad de pan
             const harinaPorPan = 230; 
             const harinaTotal = harinaPorPan * unidades;
 
@@ -104,8 +109,6 @@
             receta.forEach(ing => {
                 const cantidadGramos = harinaTotal * (ing.pct / 100);
                 const precioPorKilo = precios[ing.nombre.toLowerCase().trim()] || 0;
-                
-                // CORRECCIÓN: Dividir entre 1000 para pasar de gramos a kilos
                 const subtotal = (cantidadGramos * precioPorKilo) / 1000;
                 
                 costoAcumulado += subtotal;
@@ -126,6 +129,25 @@
             document.getElementById('costoTotal').innerText = `$ ${formatLatam(costoAcumulado, 2)}`;
             document.getElementById('pesoTotalMasa').innerText = `${formatLatam(masaTotal, 0)} gr`;
             document.getElementById('listaIngredientes').innerHTML = html;
+        }
+
+        function copiarWhatsApp() {
+            const unidades = document.getElementById('cantidadPanes').value;
+            const costo = document.getElementById('costoTotal').innerText;
+            const masa = document.getElementById('pesoTotalMasa').innerText;
+            
+            const texto = `🥖 *RESUMEN DE PRODUCCIÓN*\n` +
+                          `---------------------------\n` +
+                          `🍞 *Producto:* Pan Campesino\n` +
+                          `🔢 *Cantidad:* ${unidades} unidades\n` +
+                          `⚖️ *Masa Total:* ${masa}\n` +
+                          `💰 *Costo Insumos:* ${costo}\n` +
+                          `---------------------------\n` +
+                          `_Generado por Sistema de Gestión - Fernando Araujo_`;
+
+            navigator.clipboard.writeText(texto).then(() => {
+                alert("¡Resumen copiado! Ya puedes pegarlo en WhatsApp.");
+            });
         }
 
         window.onload = cargarPrecios;
