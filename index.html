@@ -34,7 +34,7 @@
             <div class="grid grid-cols-2 gap-4 mb-8">
                 <div class="bg-blue-50/50 border border-blue-100 rounded-3xl p-4 text-center">
                     <p class="text-[10px] uppercase font-bold text-blue-400 mb-1">Costo Insumos</p>
-                    <p id="costoTotal" class="text-2xl font-black text-blue-600">Cargando...</p>
+                    <p id="costoTotal" class="text-2xl font-black text-blue-600">Conectando...</p>
                 </div>
                 <div class="bg-slate-50 border border-slate-100 rounded-3xl p-4 text-center">
                     <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">Masa Total</p>
@@ -80,7 +80,7 @@
                 if (!res.ok) throw new Error('Fallo en la red');
                 const data = await res.json();
                 
-                // Normalización de claves para evitar errores por mayúsculas o espacios
+                // Limpieza de datos: minúsculas y quitar espacios en blanco
                 precios = Object.keys(data).reduce((acc, key) => {
                     let valor = String(data[key]).replace(/[$\s]/g, '').replace(',', '.');
                     acc[key.toLowerCase().trim()] = parseFloat(valor) || 0;
@@ -96,7 +96,7 @@
 
         function calcular() {
             const unidades = parseFloat(document.getElementById('cantidadPanes').value) || 0;
-            const harinaPorPan = 230; 
+            const harinaPorPan = 230; // 230g de harina por cada unidad
             const harinaTotal = harinaPorPan * unidades;
 
             const receta = [
@@ -115,8 +115,8 @@
 
             receta.forEach(ing => {
                 const cantidadGramos = harinaTotal * (ing.pct / 100);
-                const claveIngrediente = ing.nombre.toLowerCase().trim();
-                const precioPorKilo = precios[claveIngrediente] || 0;
+                const clave = ing.nombre.toLowerCase().trim();
+                const precioPorKilo = precios[clave] || 0;
                 
                 const subtotal = (cantidadGramos * precioPorKilo) / 1000;
                 
@@ -135,6 +135,7 @@
                     </tr>`;
             });
 
+            // Solo actualizar si logramos cargar precios
             if(Object.keys(precios).length > 0) {
                 document.getElementById('costoTotal').innerText = `$ ${formatLatam(costoAcumulado, 2)}`;
             }
@@ -143,36 +144,28 @@
         }
 
         function copiarWhatsApp() {
-            const unidades = document.getElementById('cantidadPanes').value;
             const costoTotal = document.getElementById('costoTotal').innerText;
             const masaTotal = document.getElementById('pesoTotalMasa').innerText;
+            const unidades = document.getElementById('cantidadPanes').value;
             
-            const harinaTotal = 230 * unidades;
-            const receta = [
-                { nombre: "Harina", pct: 100 },
-                { nombre: "Agua", pct: 54.5 },
-                { nombre: "Levadura", pct: 1.7 },
-                { nombre: "Sal", pct: 2.0 },
-                { nombre: "Azúcar", pct: 8 },
-                { nombre: "Margarina", pct: 8 },
-                { nombre: "Vainilla", pct: 0.8 }
-            ];
-
-            let listaIngredientes = "";
-            receta.forEach(ing => {
-                const gramos = (harinaTotal * (ing.pct / 100)).toFixed(1);
-                listaIngredientes += `${ing.nombre}: ${formatLatam(gramos, 1)}g\n`;
+            let listaTxt = "";
+            const rows = document.querySelectorAll("#listaIngredientes tr");
+            rows.forEach(row => {
+                const nombre = row.cells[0].innerText.split('(')[0].trim();
+                const cantidad = row.cells[1].querySelector('div').innerText;
+                listaTxt += `• ${nombre}: ${cantidad}\n`;
             });
 
-            const texto = `📋 PAN CAMPESINO - ${costoTotal}\n` +
-                          `MASA TOTAL: ${masaTotal}\n` +
-                          `---\n` +
-                          listaIngredientes +
-                          `---\n` +
+            const texto = `📋 *PAN CAMPESINO* (${unidades} un.)\n` +
+                          `💰 *COSTO:* ${costoTotal}\n` +
+                          `⚖️ *MASA TOTAL:* ${masaTotal}\n` +
+                          `----------------------------\n` +
+                          listaTxt +
+                          `----------------------------\n` +
                           `_Sistema de Gestión - Fernando Araujo_`;
 
             navigator.clipboard.writeText(texto).then(() => {
-                alert("¡Copiado con éxito para WhatsApp!");
+                alert("¡Resumen para WhatsApp copiado!");
             });
         }
 
