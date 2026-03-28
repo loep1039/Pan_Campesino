@@ -2,11 +2,11 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Pan Campesino | Gestión de Producción Artesanal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Pan Campesino | Gestión de Producción</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Tipografías profesionales -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -15,19 +15,17 @@
         }
 
         :root {
-            --color-primary: #D2691E;      /* Ámbar - como pan bien horneado */
+            --color-primary: #D2691E;
             --color-primary-dark: #B85C1A;
-            --color-primary-light: #FEF5E8;
-            --color-rustic: #8B4513;       /* Marrón rústico profundo */
+            --color-rustic: #8B4513;
             --color-rustic-light: #A0522D;
-            --bg-cream: #FCF9F5;            /* Blanco crema cálido */
+            --bg-cream: #FCF9F5;
             --bg-card: #FFFFFF;
             --text-dark: #2C2418;
             --text-muted: #8B7355;
-            --border-stone: #EEDDCB;        /* Borde piedra suave */
-            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+            --border-stone: #EEDDCB;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
         }
 
         body {
@@ -37,87 +35,78 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 24px;
+            padding: 16px;
         }
 
-        /* Contenedor principal estilo card artesanal */
+        /* Contenedor principal */
         .product-card {
             width: 100%;
             max-width: 450px;
             background: var(--bg-card);
-            border-radius: 32px;
+            border-radius: 28px;
             overflow: hidden;
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
             border: 1px solid var(--border-stone);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Header con estilo rústico elegante */
+        /* Header optimizado para móvil */
         .product-header {
             background: linear-gradient(135deg, var(--color-rustic) 0%, var(--color-rustic-light) 100%);
-            padding: 28px 24px;
+            padding: 18px 16px;
             text-align: center;
             position: relative;
-            border-bottom: 3px solid var(--color-primary);
+            border-bottom: 2px solid var(--color-primary);
         }
 
         .product-header h1 {
             font-family: 'Playfair Display', serif;
             color: var(--bg-cream);
-            font-size: 1.85rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            letter-spacing: -0.3px;
+            margin-bottom: 4px;
         }
 
         .product-header p {
-            color: rgba(252, 249, 245, 0.85);
-            font-size: 0.7rem;
+            color: rgba(252, 249, 245, 0.8);
+            font-size: 0.6rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             font-weight: 500;
-            font-family: 'Inter', sans-serif;
         }
 
-        /* Botón de retorno elegante */
+        /* Botón de retorno - reposicionado para móvil */
         .back-button {
             position: absolute;
-            left: 20px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
             background: rgba(252, 249, 245, 0.2);
-            backdrop-filter: blur(8px);
-            width: 38px;
-            height: 38px;
+            backdrop-filter: blur(6px);
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             border: 1px solid rgba(252, 249, 245, 0.3);
         }
 
         .back-button i {
             color: var(--bg-cream);
-            font-size: 1rem;
+            font-size: 0.85rem;
         }
 
-        .back-button:hover {
+        .back-button:active {
+            transform: translateY(-50%) scale(0.95);
             background: rgba(252, 249, 245, 0.3);
-            transform: translateY(-50%) scale(1.08);
-            border-color: var(--color-primary);
         }
 
-        /* Panel de resumen con estilo cálido */
+        /* Panel de resumen compacto */
         .summary-panel {
-            padding: 24px;
+            padding: 16px;
             background: var(--bg-cream);
             border-bottom: 1px solid var(--border-stone);
         }
@@ -125,42 +114,35 @@
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 0;
+            gap: 10px;
         }
 
         .stat-card {
             background: var(--bg-card);
-            border-radius: 24px;
-            padding: 16px;
+            border-radius: 20px;
+            padding: 10px 8px;
             text-align: center;
             box-shadow: var(--shadow-sm);
             border: 1px solid var(--border-stone);
-            transition: all 0.2s ease;
         }
 
         .stat-card.full-width {
             grid-column: 1 / -1;
             margin-bottom: 0;
-        }
-
-        .stat-card:hover {
-            border-color: var(--color-primary);
-            box-shadow: var(--shadow-md);
+            padding: 8px;
         }
 
         .stat-label {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             text-transform: uppercase;
             font-weight: 600;
             color: var(--text-muted);
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.8px;
+            margin-bottom: 4px;
         }
 
         .stat-value {
-            font-size: 1.6rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--text-dark);
             font-family: 'Playfair Display', serif;
@@ -170,61 +152,60 @@
             color: var(--color-primary);
         }
 
-        /* Control de cantidad con estilo rústico */
+        /* Control de cantidad compacto */
         .quantity-control {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            margin-top: 4px;
+            gap: 8px;
+            margin-top: 2px;
         }
 
         .qty-input {
-            width: 80px;
+            width: 65px;
             border: 1.5px solid var(--border-stone);
-            border-radius: 48px;
-            font-size: 1.2rem;
+            border-radius: 40px;
+            font-size: 1rem;
             font-weight: 600;
             color: var(--text-dark);
             text-align: center;
-            padding: 10px 0;
+            padding: 6px 0;
             outline: none;
             background: var(--bg-card);
             font-family: 'Inter', sans-serif;
-            transition: all 0.2s ease;
         }
 
         .qty-input:focus {
             border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(210, 105, 30, 0.1);
+            box-shadow: 0 0 0 2px rgba(210, 105, 30, 0.1);
         }
 
         .unit-text {
             color: var(--text-muted);
             font-weight: 500;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
         }
 
-        /* Lista de ingredientes */
+        /* Lista de ingredientes compacta */
         .ingredients-list {
-            padding: 8px 24px 24px;
+            padding: 6px 16px 16px;
             background: var(--bg-card);
         }
 
         .section-title {
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             color: var(--color-rustic);
-            margin-bottom: 16px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--border-stone);
-            font-family: 'Inter', sans-serif;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1.5px solid var(--border-stone);
         }
 
         .section-title i {
-            margin-right: 8px;
+            margin-right: 6px;
+            font-size: 0.7rem;
             color: var(--color-primary);
         }
 
@@ -232,17 +213,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 0;
+            padding: 10px 0;
             border-bottom: 1px solid var(--border-stone);
-            transition: background 0.2s ease;
-        }
-
-        .ingredient-item:hover {
-            background: var(--bg-cream);
-            padding-left: 8px;
-            padding-right: 8px;
-            margin: 0 -8px;
-            border-radius: 12px;
         }
 
         .ingredient-item:last-child {
@@ -252,15 +224,14 @@
         .ingredient-name {
             font-weight: 600;
             color: var(--text-dark);
-            font-size: 0.95rem;
-            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
         }
 
         .ingredient-percent {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: var(--text-muted);
             font-weight: normal;
-            margin-left: 6px;
+            margin-left: 4px;
         }
 
         .ingredient-details {
@@ -269,21 +240,20 @@
 
         .ingredient-quantity {
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: var(--text-dark);
-            font-family: 'Inter', sans-serif;
         }
 
         .ingredient-price {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--color-primary);
             font-weight: 600;
-            margin-top: 2px;
+            margin-top: 1px;
         }
 
-        /* Botón de acción con estilo ámbar */
+        /* Botón de acción compacto */
         .action-button {
-            margin: 8px 24px 24px;
+            margin: 6px 16px 20px;
         }
 
         .btn-copy {
@@ -291,73 +261,84 @@
             background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
             color: white;
             border: none;
-            padding: 16px 24px;
-            border-radius: 48px;
+            padding: 12px 16px;
+            border-radius: 40px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(210, 105, 30, 0.3);
-            font-family: 'Inter', sans-serif;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-copy:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(210, 105, 30, 0.4);
-            background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(210, 105, 30, 0.25);
         }
 
         .btn-copy:active {
-            transform: translateY(1px);
+            transform: scale(0.98);
         }
 
         .copy-message {
             text-align: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--color-primary);
-            margin-top: 12px;
+            margin-top: 8px;
             display: none;
             font-weight: 500;
         }
 
-        /* Footer con estilo artesanal */
+        /* Footer compacto */
         .footer-brand {
             text-align: center;
-            padding: 18px 24px;
+            padding: 12px 16px;
             background: var(--bg-cream);
             border-top: 1px solid var(--border-stone);
         }
 
         .footer-brand span {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: var(--text-muted);
             font-weight: 500;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
+        }
+
+        /* Ajustes para móviles muy pequeños */
+        @media (max-width: 380px) {
+            body {
+                padding: 12px;
+            }
+            .product-header h1 {
+                font-size: 1.3rem;
+            }
+            .stat-value {
+                font-size: 1rem;
+            }
+            .ingredient-name {
+                font-size: 0.75rem;
+            }
+            .ingredient-quantity {
+                font-size: 0.7rem;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="product-card">
-    <!-- Header con botón de retorno -->
+    <!-- Header con botón de retorno - reposicionado -->
     <div class="product-header">
         <a href="https://loep1039.github.io/Menu_Panaderia/" class="back-button">
             <i class="fas fa-arrow-left"></i>
         </a>
         <h1>PAN CAMPESINO</h1>
-        <p>Sistema de gestión · Fernando Araujo</p>
+        <p>Fernando Araujo</p>
     </div>
 
-    <!-- Panel de resumen -->
+    <!-- Panel de resumen compacto -->
     <div class="summary-panel">
         <div class="stats-grid">
             <div class="stat-card full-width">
-                <div class="stat-label">Cantidad de panes</div>
+                <div class="stat-label">Cantidad</div>
                 <div class="quantity-control">
                     <input type="number" id="inputPanes" class="qty-input" value="1" min="1" step="1">
                     <span class="unit-text">unidades</span>
@@ -377,7 +358,7 @@
     <!-- Lista de ingredientes -->
     <div class="ingredients-list">
         <div class="section-title">
-            <i class="fas fa-seedling"></i> Ingredientes artesanales
+            <i class="fas fa-flour"></i> Ingredientes
         </div>
         <div id="listaIngredientes"></div>
     </div>
@@ -385,16 +366,16 @@
     <!-- Botón de acción -->
     <div class="action-button">
         <button class="btn-copy" onclick="copiarAlPortapapeles()">
-            <i class="fas fa-copy"></i> Copiar lista de insumos
+            <i class="fas fa-copy"></i> Copiar lista
         </button>
         <div id="copyMessage" class="copy-message">
-            <i class="fas fa-check-circle"></i> ¡Lista copiada al portapapeles!
+            <i class="fas fa-check-circle"></i> ¡Lista copiada!
         </div>
     </div>
 
     <!-- Footer -->
     <div class="footer-brand">
-        <span>🍞 Elaboración artesanal · Recetas tradicionales</span>
+        <span>Gestión profesional de panadería</span>
     </div>
 </div>
 
@@ -471,21 +452,21 @@
         const masaTotalStr = document.getElementById('resMasa').innerText;
         const costoTotalStr = document.getElementById('resCosto').innerText;
 
-        let textoCopiar = `🍞 ${RECETA.nombre.toUpperCase()}\n`;
-        textoCopiar += `━━━━━━━━━━━━━━━━━━━━\n`;
-        textoCopiar += `📊 Cantidad: ${panes} unidad(es)\n`;
-        textoCopiar += `💰 Costo insumos: ${costoTotalStr}\n`;
-        textoCopiar += `⚖️ Masa total: ${masaTotalStr}\n`;
-        textoCopiar += `━━━━━━━━━━━━━━━━━━━━\n`;
-        textoCopiar += `📋 LISTA DE INSUMOS:\n\n`;
+        let textoCopiar = `${RECETA.nombre.toUpperCase()}\n`;
+        textoCopiar += `━━━━━━━━━━━━━━━━\n`;
+        textoCopiar += `Cantidad: ${panes} unidad(es)\n`;
+        textoCopiar += `Costo insumos: ${costoTotalStr}\n`;
+        textoCopiar += `Masa total: ${masaTotalStr}\n`;
+        textoCopiar += `━━━━━━━━━━━━━━━━\n`;
+        textoCopiar += `LISTA DE INSUMOS:\n\n`;
 
         RECETA.items.forEach(ing => {
             const gramos = (RECETA.harinaPorUnidad * panes) * (ing.pct / 100);
-            textoCopiar += `• ${ing.nombre}: ${gramos.toFixed(1)} g\n`;
+            textoCopiar += `${ing.nombre}: ${gramos.toFixed(1)} g\n`;
         });
 
-        textoCopiar += `\n━━━━━━━━━━━━━━━━━━━━\n`;
-        textoCopiar += `Sistema de Gestión - Fernando Araujo`;
+        textoCopiar += `\n━━━━━━━━━━━━━━━━\n`;
+        textoCopiar += `Fernando Araujo`;
 
         navigator.clipboard.writeText(textoCopiar).then(() => {
             const messageEl = document.getElementById('copyMessage');
